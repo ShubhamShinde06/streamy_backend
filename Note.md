@@ -73,3 +73,13 @@ common or module edit
   },
 ```
 
+## Floders
+
+./src floders in create sub floders
+
+` controllers`
+`db`
+`middlewares`
+`models`
+`routes`
+`utils`
