@@ -1,4 +1,4 @@
-# 1. Call a ( npm init )
+# 1. Enter a ( npm init )
 
 ``` 
 package name: (backend)
