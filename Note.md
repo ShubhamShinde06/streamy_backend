@@ -83,3 +83,56 @@ common or module edit
 `models`
 `routes`
 `utils`
+
+## Install npm package
+```
+npm i dotenv
+npm i mongoose
+npm i express
+```
+
+## DB connection
+in `constants.js` 
+```
+export const DB_NAME = "Database Name"
+```
+
+in `./db` in `index.js`
+
+in `./src` in `index.js`
+
+```
+//require('dotenv').config({path: './env'})
+import dotenv from "dotenv"
+import connectDB from "./db/index.js";
+
+dotenv.config({
+    path: './env'
+})
+
+connectDB();
+```
+
+### Package.json edit
+```
+"scripts": {
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+  }
+```
+
+open terminal
+
+`npm run dev`
+```
+> backend@1.0.0 dev
+> nodemon -r dotenv/config --experimental-json-modules src/index.js
+
+[nodemon] 3.1.4
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,cjs,json
+[nodemon] starting `node -r dotenv/config --experimental-json-modules src/index.js`
+
+ MongoDB connected !! DB HOST: localhost
+
+```
