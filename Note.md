@@ -29,3 +29,7 @@ use to github upload code some file not use to for ex:-(out, env, etc)
 
 ## 5. .env create file
 env variable system take up because  Secure 
+
+## 6. create floder ./src
+app.js | index.js | constants.js create a files
+
