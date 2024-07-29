@@ -46,7 +46,10 @@ To run this project, you will need to add the following environment variables to
 
 
 ##  create floder ./src
-app.js | index.js | constants.js create a files
+`app.js`
+`index.js`
+`constants.js`
+create a files
 
 ## two types import in javascript
 common or module edit
@@ -113,7 +116,7 @@ dotenv.config({
 connectDB();
 ```
 
-### Package.json edit
+Package.json edit
 ```
 "scripts": {
     "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
@@ -134,5 +137,58 @@ open terminal
 [nodemon] starting `node -r dotenv/config --experimental-json-modules src/index.js`
 
  MongoDB connected !! DB HOST: localhost
+```
 
+
+## Using express
+in `./src` in `app.js`
+```
+import express from "express";
+const app = express();
+export {app}
+```
+
+in `./src` in `index.js`
+```
+//require('dotenv').config({path: './env'})
+import dotenv from "dotenv"
+import connectDB from "./db/index.js";
+import { app } from "./app.js";
+
+dotenv.config({
+    path: './env'
+})
+
+//new
+connectDB()
+.then(() => {
+    app.listen(process.env.PORT || 8000, () => {
+        console.log(` Server is running at port : ${process.env.PORT}`)
+    })
+})
+.catch((err) => {
+    console.log("MONGO_DB connection failed !!! ",err);
+})
+```
+
+## Using express
+
+in `./src` in `app.js`
+```
+import express from "express";
+const app = express();
+export {app}
+```
+
+in `./src` in `index.js`
+```
+connectDB()
+.then(() => {
+    app.listen(process.env.PORT || 8000, () => {
+        console.log(` Server is running at port : ${process.env.PORT}`)
+    })
+})
+.catch((err) => {
+    console.log("MONGO_DB connection failed !!! ",err);
+})
 ```
