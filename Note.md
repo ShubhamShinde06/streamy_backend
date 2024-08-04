@@ -227,3 +227,68 @@ app.use(cookieParser()) //this
  
 export {app} 
 ```
+
+## Error Handling
+
+in `utils` in create file `asyncHandler.js`
+
+```
+const asyncHandler = (requestHandler) => {
+    (req, res, next) => {
+        Promise.resolve(requestHandler(req, res, next))
+        .catch((err) => next(err))
+    }
+}
+export {asyncHandler}
+```
+
+in `utils` in create file `ApiError.js`
+
+```
+class ApiError extends Error {
+    constructor(
+        statusCode,
+        message = "Something went wrong",
+        errors = [],
+        statck = ""
+    )
+    {
+        super(message)
+        this.statusCode = statusCode
+        this.data = null
+        this.message = message
+        this.success = false;
+        this.errors = errors
+
+        if (statck){
+            this.stack = statck
+        } else {
+            Error.captureStackTrace(this, this.constructor)
+        }
+    }
+}
+
+export {ApiError}
+```
+
+in `utils` in create file `ApiResponse.js`
+
+```
+class ApiResponse {
+    constructor(statusCode, data, message = "Success"){
+        this.statusCode = statusCode
+        this.data = data
+        this.message = message
+        this.success = statusCode < 400
+    }    
+}
+
+export {ApiResponse}
+```
+
+### HTTP response status
+* informational res (100 - 199)
+* successful res (200 - 299)
+* redirection mes (300 - 399)
+* client error res (400 - 499)
+* server error res (500 - 599)
