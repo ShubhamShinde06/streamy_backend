@@ -292,3 +292,102 @@ export {ApiResponse}
 * redirection mes (300 - 399)
 * client error res (400 - 499)
 * server error res (500 - 599)
+
+## Create Models 
+
+in `models` in create file `user.model.js`
+
+```
+import mongoose, {Schema} from "mongoose";
+
+const userSchema = new Schema(
+    {
+        username: {
+            type: String,
+            required: true,
+            unique: true,
+            lowercase: true,
+            trim: true,
+            index: true
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            lowercase: true,
+            trim: true
+        },
+        fullname: {
+            type: String,
+            required: true,
+            trim: true,
+            index: true
+        },
+        avatar: {
+            type: String, // cloudinary url
+            required: true
+        },
+        watchHistory: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Video"
+            }
+        ],
+        password: {
+            type: String,
+            required: [true, 'Password is required']
+        },
+        refreshToken: {
+            type: String
+        }
+    },
+    {
+        timestamps: true
+    }
+)
+
+export const User = mongoose.model("User",userSchema)
+```
+
+in `models` in create file `video.model.js`
+
+```
+import mongoose,{Schema} from "mongoose";
+
+const videoSchema = new Schema(
+    {
+        videoFile: {
+            type: String, // cloudinary url
+            required: true
+        },
+        thumbnail: {
+            type: String, // cloudinary url
+            required: true
+        },
+        title: {
+            type: String, 
+            required: true
+        },
+        description: {
+            type: String, 
+            required: true
+        },
+        duration: {
+            type: Number
+        },
+        views: {
+            type: Number,
+            default: 0
+        },
+        isPublished: {
+            type: Boolean,
+            default: true
+        }
+    },
+    {
+        timestamps: true
+    }
+)
+
+export const Video = mongoose.model("Video", videoSchema)
+```
