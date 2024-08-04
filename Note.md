@@ -40,9 +40,11 @@ use to github upload code some file not use to for ex:-(out, env, etc)
 
 To run this project, you will need to add the following environment variables to your .env file
 
-`API_KEY`
+`PORT = 8000`
 
-`ANOTHER_API_KEY`
+`LOCALHOST_MONGO_DB_URL = mongodb://localhost:27017/`
+
+
 
 
 ##  create floder ./src
@@ -51,7 +53,7 @@ To run this project, you will need to add the following environment variables to
 `constants.js`
 create a files
 
-## two types import in javascript
+## two types import in javascript edit in package.json
 common or module edit
 ```
 {
@@ -101,6 +103,23 @@ export const DB_NAME = "Database Name"
 ```
 
 in `./db` in `index.js`
+
+```
+import mongoose from "mongoose";
+import { DB_NAME } from "../constants.js"
+
+const connectDB = async () => {
+    try {
+        const connectionInstance = await mongoose.connect(`${process.env.LOCALHOST_MONGO_DB_URL}/${DB_NAME}`);
+        console.log(`\n MongoDB connected !! DB HOST: ${connectionInstance.connection.host}`);
+    } catch (error) {
+        console.log("MONGO CONNECTION ERROR", error);
+        process.exit(1)
+    }
+}
+
+export default connectDB;
+```
 
 in `./src` in `index.js`
 
@@ -171,24 +190,40 @@ connectDB()
 })
 ```
 
-## Using express
+## install new npm package
 
-in `./src` in `app.js`
+cors Allow to access only selected frontend url and cookie is securely read and write only server
+
+``` npm i cookie-parser ```
+
+``` npm i cors ```
+
+`./src` in `./app.js`
+
 ```
 import express from "express";
-const app = express();
-export {app}
-```
+import cors from "cors"; //this
+import cookieParser from "cookie-parser"; //this
 
-in `./src` in `index.js`
-```
-connectDB()
-.then(() => {
-    app.listen(process.env.PORT || 8000, () => {
-        console.log(` Server is running at port : ${process.env.PORT}`)
-    })
-})
-.catch((err) => {
-    console.log("MONGO_DB connection failed !!! ",err);
-})
+const app = express();
+
+app.use(cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true
+})) //this
+app.use(express.json(
+    {
+        limit: "16kb"
+    }
+)) //this
+app.use(express.urlencoded(
+    {
+        extended: true, 
+        limit: "16kb"
+    }
+)) //this
+app.use(express.static("public")) //this
+app.use(cookieParser()) //this
+ 
+export {app} 
 ```
