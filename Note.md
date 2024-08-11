@@ -391,3 +391,151 @@ const videoSchema = new Schema(
 
 export const Video = mongoose.model("Video", videoSchema)
 ```
+
+## new install npm pakage
+
+```npm install mongoose-aggregate-paginate-v2```
+
+in `./src` in `./models` in `videos.models.js`
+
+```
+import mongoose,{Schema} from "mongoose";
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2" // this
+
+const videoSchema = new Schema(
+    {
+        videoFile: {
+            type: String, // cloudinary url
+            required: true
+        },
+        thumbnail: {
+            type: String, // cloudinary url
+            required: true
+        },
+        title: {
+            type: String, 
+            required: true
+        },
+        description: {
+            type: String, 
+            required: true
+        },
+        duration: {
+            type: Number
+        },
+        views: {
+            type: Number,
+            default: 0
+        },
+        isPublished: {
+            type: Boolean,
+            default: true
+        }
+    }
+    {
+        timestamps: true
+    }
+)
+
+videoSchema.plugin(mongooseAggregatePaginate) //this
+
+export const Video = mongoose.model("Video", videoSchema)
+```
+
+### new install npm pakage
+
+```npm install bcrypt``` // a library help you hash password
+
+in `./src` in `./models` in `user.models.js`
+
+```
+import mongoose, {Schema} from "mongoose";
+import bcrypt from "bcrypt"; /this
+
+const userSchema = new Schema(
+    {
+    }
+)
+
+userSchema.pre("save", async function(next){
+    if(!this.isModified("password")) return next();
+    this.password = await bcrypt.hash(this.password, 10)
+    next()
+}) //this normal password convert to hash password
+
+userSchema.methods.isPasswordCorrect = async function (password) {
+  return await bcrypt.compare(password, this.password)
+} //this compare user password and hash password
+
+export const User = mongoose.model("User",userSchema)
+```
+
+```npm install jsonwebtoken``` 
+
+in `.env`
+``` 
+PORT = 8000
+CORS_ORIGIN = *
+
+LOCALHOST_MONGO_DB_URL = mongodb://localhost:27017/
+
+ACCESS_TOKEN_SECRET = Eh4@~A6J$VWf4Re~Djd_Ck7*->AH1p/Vx6%^D8b$r5 // this
+
+ACCESS_TOKEN_EXPIRY = 1d  // this
+
+REFRESH_TOKEN_SECRET = Wp9|oE9Fm*18Rw4$ZZycqutLo6ux8rhX6Pb2^XsdaEqu  // this
+
+REFRESH_TOKEN_EXPIRY = 15d  // this
+```
+
+in `./src` in `./models` in `user.models.js`
+```
+import mongoose, {Schema} from "mongoose";
+import jwt from "jsonwebtoken"; //this
+import bcrypt from "bcrypt";
+
+const userSchema = new Schema(
+    {
+    }
+)
+
+userSchema.pre("save", async function(next){
+    if(!this.isModified("password")) return next();
+
+    this.password = await bcrypt.hash(this.password, 10)
+    next()
+})
+
+userSchema.methods.isPasswordCorrect = async function (password) {
+  return await bcrypt.compare(password, this.password)
+}
+
+userSchema.methods.generatAccessToken = function(){
+   return jwt.sign(
+        {
+            _id: this._id,
+            email: this.email,
+            username: this.username,
+            fullname: this.fullname
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+        }
+    )
+} //this
+
+userSchema.methods.generatRefreshToken = async function(){
+    return jwt.sign(
+        {
+            _id: this._id
+        },
+        process.env.REFRESH_TOKEN_SECRET,
+        {
+            expiresIn: process.env.REFRESH_TOKEN_EXPIRY
+        }
+    )
+} //this
+
+export const User = mongoose.model("User",userSchema)
+```
