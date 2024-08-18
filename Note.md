@@ -539,3 +539,72 @@ userSchema.methods.generatRefreshToken = async function(){
 
 export const User = mongoose.model("User",userSchema)
 ```
+
+## file uploading
+
+* install package
+
+`npm i cloudnary`
+`npm i multer`
+
+in `./src` in `./utils` create `cloudnary.js`
+
+```
+import {v2 as cloudinary} from "cloudinary"
+import {fs} from "fs" // file read write remove etc.
+
+// Configuration
+cloudinary.config({ 
+    cloud_name: process.env.CLOUD_NAME, 
+    api_key: process.env.API_KEY, 
+    api_secret: process.env.API_SECRET 
+});
+
+const uploadOnCloudinary = async (localFilePath) => {
+    try{
+        if(!localFilePath) return null
+        const res = await cloudinary.uploader.upload
+        (localFilePath, {
+            resource_type: "auto"
+        })
+        // file has been uploaded successfull
+        console.log("file is uploaded on cloudinary",red.url);
+        return res;
+    } catch(err){
+        fs.unlinkSync(localFilePath) // remove the local saved temp file as the upload opration got failed
+        return null;
+    }
+}
+
+export {uploadOnCloudinary}
+```
+
+`.env`
+```
+CLOUD_NAME = #
+API_KEY = #
+API_SECRET = #
+```
+
+in `./src` in `./middleware` create `multer.middleware.js`
+
+```
+import multer from "multer";
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, "./public/temp")
+    },
+    filename: function (req, file, cb) {
+        // const uniqueSuffix = Date.now() + '-' + Math.round
+        // (Math.random() * 1E9)
+        cb(null, file.originalname)
+    }
+})
+
+export const upload = multer({
+    storage,
+})
+```
+
+
