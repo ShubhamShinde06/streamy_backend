@@ -234,7 +234,7 @@ in `utils` in create file `asyncHandler.js`
 
 ```
 const asyncHandler = (requestHandler) => {
-    (req, res, next) => {
+    return (req, res, next) => {
         Promise.resolve(requestHandler(req, res, next))
         .catch((err) => next(err))
     }
@@ -596,8 +596,6 @@ const storage = multer.diskStorage({
         cb(null, "./public/temp")
     },
     filename: function (req, file, cb) {
-        // const uniqueSuffix = Date.now() + '-' + Math.round
-        // (Math.random() * 1E9)
         cb(null, file.originalname)
     }
 })
@@ -605,6 +603,43 @@ const storage = multer.diskStorage({
 export const upload = multer({
     storage,
 })
+```
+
+## router and controller
+
+in `controllers` in `user.controller.js`
+
+```
+import asyncHandler from '../utils/asyncHandler.js';
+
+export const registerUser =  asyncHandler( async (req, res) => {
+    res.status(200).json({
+        message: "ok"
+    })
+})
+```
+
+in `routes` in `user.routes.js`
+
+```
+import { Router } from "express";
+import {registerUser} from "../controllers/user.controller.js"
+
+const router = Router()
+
+router.route('/register').get(registerUser)
+
+export default router
+```
+
+in `app.js`
+
+```
+//import routes
+import userRouter from './routes/user.routes.js'
+
+//routes declaration
+app.use("/api/v1/users", userRouter)
 ```
 
 
